@@ -1,0 +1,57 @@
+<link rel="import" href="../../components/core-ajax/core-ajax.html">
+<link rel="import" href="../../components/core-icons/core-icons.html">
+<link rel="import" href="../../components/core-menu/core-menu.html">
+<link rel="import" href="../../components/core-list/core-list.html">
+<link rel="import" href="../../components/paper-item/paper-item.html">
+
+<polymer-element name="drawer-menu">
+  <template>
+    <core-menu>
+      <link rel="stylesheet" href="drawer-menu.css">
+
+      <a href="#events">
+        <paper-item>
+          <core-icon icon="event"></core-icon>
+          Show all near events
+        </paper-item>
+      </a>
+      <a href="#user/{{userId}}/attend">
+        <paper-item>
+          <core-icon icon="done"></core-icon>
+          Events you attend to
+        </paper-item>
+      </a>
+      <a href="#user/{{userId}}/events">
+        <paper-item>
+          <core-icon icon="account-box"></core-icon>
+          Yours events
+        </paper-item>
+      </a> 
+      
+      <div class="separator">Categories</div>
+
+      <core-ajax auto url="http://156.35.95.67/dit/categories"
+                 on-core-response={{handleResponse}} handleAs="json"></core-ajax>
+      <template id="categories" repeat="{{categories}}">
+        <a href="#events/{{id}}/{{name}}">
+          <paper-item>
+            <core-icon icon="label" style="color: {{color}}"></core-icon>
+            {{name}}
+          </paper-item>
+        </a>
+      </template>
+    </core-menu>
+  </template>
+
+  <script>
+    Polymer({
+      publish: {
+        userId: ''
+      },
+
+      handleResponse: function(e) {
+        this.$.categories.model = { categories: e.detail.response };
+      }
+    });
+  </script>
+</polymer-element>

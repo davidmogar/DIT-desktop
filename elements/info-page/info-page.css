@@ -1,0 +1,117 @@
+:host {
+  display:block;
+  font-family: 'RobotoDraft', sans-serif;
+  height: 100%;
+}
+
+a, a:visited, a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+#back {
+  color: #fff;
+}
+
+core-scroll-header-panel {
+  height: 100%;
+}
+
+core-toolbar {
+  background-color: #009688;
+  color: #fff;
+}
+
+[content] {
+  margin: 60px auto 0;
+  max-width: 800px;
+}
+
+core-image {
+  width: 100%;
+}
+
+.profileContainer {
+  position: relative;
+  text-align: right;
+  top: -40px;
+  width: 100%;
+}
+
+.profileImage {
+  background-color: #ff3d00;
+  border-radius: 50%;
+  height: 56px;
+  margin-right: 60px;
+  vertical-align: bottom;
+  width: 56px;
+}
+
+.attendee {
+        margin-bottom: 10px;
+        margin-right: 10px;
+      }
+
+      .details {
+        padding: 0 10px;
+        position: relative;
+      }
+
+h1 {
+  font-size: 22px;
+  font-weight: 400;
+  margin: 0;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+#attend {
+  position: absolute;
+  right: 10px;
+}
+
+#attend paper-button {
+  background-color: #ff3d00;
+  color: white;
+}
+
+hr#afterButton {
+  margin-top: 100px;
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+  margin: 30px 0;
+}
+
+.placeContainer {
+  float: left;
+  margin-right: 10px;
+  width: calc(33.333% - 7px);
+}
+
+.placeContainer:last-of-type {
+  margin-right: 0;
+}
+
+.placeContainer p {
+  font-weight: 300;
+}
+
+.placeImage {
+  background-color: #ff3d00;
+  height: 150px;
+}
+
+polymer-ui-ratings {
+  margin-left: -10px;
+}

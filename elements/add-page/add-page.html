@@ -1,0 +1,193 @@
+<link rel="import" href="../base-page/base-page.html">
+<link rel="import" href="../../components/core-scroll-header-panel/core-scroll-header-panel.html">
+<link rel="import" href="../../components/paper-date-picker/paper-date-picker-dialog.html">
+<link rel="import" href="../../components/paper-dialog/paper-action-dialog.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../../components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../components/paper-input/paper-input.html">
+<link rel="import" href="../../components/paper-slider/paper-slider.html">
+
+<polymer-element name="add-page"
+                 extends="base-page"
+                 layout vertical>
+  <template>
+    <style>
+      :host {
+        display:block;
+        height: 100%;
+      }
+
+      a, a:visited, a:hover {
+        color: white;
+        text-decoration: none;
+      }
+
+      core-header-panel {
+        height: 100%;
+      }
+
+      core-toolbar {
+        background-color: #009688;
+        color: white;
+      }
+
+      #save {
+        font-size: 15px;
+      }
+
+      [content] {
+        margin: 60px auto 0;
+        max-width: 800px;
+      }
+
+      paper-input {
+        font-size: 25px;
+        width: 100%;
+      }
+
+      paper-input /deep/ #floatedLabelText {
+        color: #ff5722 !important;
+      }
+
+      paper-input /deep/ .focused-underline {
+        background-color: #ff5722;
+      }
+
+      paper-slider {
+        width: 100%;
+      }
+
+      div.label {
+        color: #ff5722;
+        font-size: 19px;
+        margin: 25px 0 10px;
+      }
+
+      paper-slider::shadow #sliderKnobInner,
+      paper-slider::shadow #sliderKnobInner:before,
+      paper-slider::shadow #sliderBar::shadow #activeProgress {
+        background-color: #ff5722;
+      }
+
+      paper-dropdown-menu {
+        font-size: 19px;
+        margin-top: 40px;
+        width: 100%;
+      }
+
+      paper-dropdown-menu::shadow .selectedItem {
+        color: #ff5722;
+      }
+    </style>
+
+    <core-header-panel id="scrollHeaderPanel" condenses flex>
+      <core-toolbar>
+        <a href="/" on-click="{{goBack}}">
+          <paper-icon-button icon="arrow-back"></paper-icon-button>
+        </a>
+        <div id="title">New Event</div>
+        <span flex></span>
+        <paper-button id="save" on-tap="{{save}}">Save</paper-button>
+      </core-toolbar>
+      <div content>
+        <paper-input label="Title" id="title" floatingLabel></paper-input>
+        <paper-input label="Description" id="description" floatingLabel></paper-input>
+        <core-ajax auto url="http://156.35.95.67/dit/categories"
+                 on-core-response={{handleResponse}} handleAs="json"></core-ajax>
+        <paper-dropdown-menu label="Category" id="category">
+          <paper-dropdown class="dropdown">
+            <core-menu class="menu">
+              <template id="categories" repeat="{{categories}}">
+                <paper-item>{{name}} (id: {{id}})</paper-item>
+              </template>
+            </core-menu>
+          </paper-dropdown>
+        </paper-dropdown-menu>
+
+        <template id="dateTemplate" is="auto-binding">
+          <paper-input label="Date" id="date" value="{{date}}" floatingLabel on-tap={{openDatePicker}}></paper-input>
+        </template>
+        <paper-date-picker-dialog id="picker" date="2015/2/25"></paper-date-picker-dialog>
+        <div class="label">Hour</div>
+        <paper-slider id="hour" pin min="0" max="24" value="12"></paper-slider>
+        <div class="label">Minutes</div>
+        <paper-slider id="minutes" pin min="0" max="60" value="30"></paper-slider>
+        <paper-input label="Address" id="address" floatingLabel></paper-input>
+      </div>
+    </core-header-panel>
+
+    <core-ajax id="ajaxSave" url="http://156.35.95.67/dit/events"
+               method="POST" on-core-response="{{handleSaveResponse}}"></core-ajax>
+  </template>
+
+  <script>
+    Polymer('add-page', {
+      publish: {
+        user: ''
+      },
+
+      date: '',
+      year: '',
+      day: '',
+      month: '',
+
+      ready: function() {
+        var picker = this.$.picker;
+        var date = this.date
+        var self = this;
+
+        picker.addEventListener('selection-changed', function(e) {
+          self.month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(picker.monthShortName) + 1;
+          self.day = picker.dayOfMonth;
+          self.year = picker.year;
+
+          date = self.month + '/' + self.day + '/' + self.year;
+          self.$.dateTemplate.model = {date: date};
+        });
+      },
+
+      openDatePicker: function() {
+        this.$.picker.open();
+      },
+
+      openTimePicker: function() {
+        this.$.dialog.toggle();
+      },
+
+      handleResponse: function(e) {
+        this.$.categories.model = { categories: e.detail.response };
+      },
+
+      handleSaveResponse: function(e) {
+        console.log(e);
+      },
+
+      save: function(e) {
+        var title = this.$.title.value;
+        var description = this.$.description.value;
+        var category = this.$.category.selectedItemLabel.split(': ')[1].slice(0, -1);
+        var time = new Date(this.year, this.month, this.day, this.$.hour.value, this.$.minutes.value, 0, 0).getTime();
+        var address = this.$.address.value;
+        var profileImage = this.user.profile;
+        var userId = this.user.id;
+
+        this.$.ajaxSave.body = JSON.stringify({
+          title: title,
+          description: description,
+          categoryId: category,
+          time: time,
+          address: address,
+          lat: 43.355034,
+          lng: -5.851503,
+          profileImage: profileImage,
+          userId: userId
+        });
+
+        this.$.ajaxSave.contentType = 'application/json';
+
+        this.$.ajaxSave.go();
+      }
+    });
+  </script>
+</polymer-element>

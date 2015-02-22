@@ -1,0 +1,149 @@
+<link rel="import" href="../base-page/base-page.html">
+
+<link rel="import" href="../../components/core-drawer-panel/core-drawer-panel.html">
+<link rel="import" href="../../components/core-header-panel/core-header-panel.html">
+<link rel="import" href="../../components/core-icons/core-icons.html">
+<link rel="import" href="../../components/core-image/core-image.html">
+<link rel="import" href="../../components/core-menu/core-menu.html">
+<link rel="import" href="../../components/core-list/core-list.html">
+<link rel="import" href="../../components/core-style/core-style.html">
+<link rel="import" href="../../components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../../components/google-signin/google-signin.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/paper-fab/paper-fab.html">
+<link rel="import" href="../../components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../components/paper-item/paper-item.html">
+
+<link rel="import" href="../drawer-menu/drawer-menu.html">
+<link rel="import" href="../event-card/event-card.html">
+
+<polymer-element name="events-page"
+                 extends="base-page"
+                 attributes="events">
+  <template>
+    <link rel="stylesheet" href="events-page.css">
+
+    <core-style id="navheaderstyle">
+      #navheader::after {
+        background-image: url({{coverImg}});
+      }
+    </core-style>
+    <core-style ref="navheaderstyle"></core-style>
+    
+    <div id="loginscreen" layout vertical center-center fit
+     class="{{ {show: !isAuthenticated} | tokenList }}">
+  <google-signin width="wide" height="tall"
+      clientId="335051792914-6cnes5lh32ehit2vhpiigi0qel68heeb.apps.googleusercontent.com"
+      scopes="profile email https://www.googleapis.com/auth/plus.login"
+      on-google-signin-success="{{onSigninSuccess}}"
+      on-google-signin-failure="{{onSigninFailure}}"></google-signin>
+</div>
+ 
+    <core-drawer-panel id="drawerPanel">
+      <core-header-panel mode="scroll" drawer>
+        <core-toolbar id="navheader" class="medium-tall">
+          <img class="profile" src="{{user.profile}}" hidden?="{{!user.profile}}">
+      <div class="bottom" layout vertical>
+        <span>{{user.name}}</span>
+        <span>{{user.email}}</span>
+      </div>
+        </core-toolbar>
+        <drawer-menu userId="{{user.id}}"></drawer-menu>
+      </core-header-panel>
+
+      <core-header-panel id="headerPanel" flex mode="waterfall-tall" main>
+        <core-toolbar class="animate tall">
+          <paper-icon-button id="navicon" icon="menu" on-tap="{{toggleDrawer}}"></paper-icon-button>
+          <span flex></span>
+          <paper-icon-button id="refresh" icon="refresh" on-tap="{{refresh}}"></paper-icon-button>
+          <div id="heading" class="bottom indent">{{heading}}</div>
+          <core-image class="bottom" src="../../img/calendar.png" sizing="cover"></core-image>
+        </core-toolbar>
+        <div class="content">
+          <core-list data="{{events}}"
+                                 scrollTarget="{{$.headerPanel.scroller}}"
+                                 runwayFactor="5">
+            <template>
+              <event-card class="event" headerImage="{{model.headerImage}}" profileImage="{{model.profileImage}}">
+                <div content>
+                  <h2>{{model.title}}</h2>
+                  <p><core-icon icon="explore"></core-icon> {{model.address}}</p>
+                  <p><core-icon icon="today"></core-icon> {{model.time}}</p>
+                </div>
+                <div actions>
+                  <a href="#event/{{model.id}}">
+                    <paper-button affirmative>Details</paper-button>
+                  </a>
+                  <a href="#events/{{model.id}}/attendees/{{user.id}}">
+                  <paper-button class="accent" affirmative>Attend</paper-button>
+                  </a>
+                </div>
+              </event-card>
+            </template>
+          </core-list>
+        </div>
+      </core-header-panel>
+    </core-drawer-panel>
+
+    <a href="#add" id="add">
+      <paper-fab icon="add"></paper-fab>
+    </a>
+  </template>
+
+  <script>
+    Polymer('events-page', {
+      publish: {
+        
+        /**
+         * The title of the page.
+         *
+         * @attribute heading
+         * @type string
+         * @default ''
+         */
+        heading: ''
+      },
+
+      isAuthenticated: false,
+      user: {},
+
+      toggleDrawer: function() {
+        this.$.drawerPanel.togglePanel();
+      },
+
+      attend: function(e) {
+        console.log(e);
+      },
+
+      onSigninSuccess: function(e) {
+        this.isAuthenticated = true;
+        this.gapi = e.detail.gapi;
+        var self = this;
+
+        gapi.client.load('plus', 'v1').then(function() {
+          gapi.client.plus.people.get({userId: 'me'}).then(function(resp) {
+            var PROFILE_IMAGE_SIZE = 75;
+            var COVER_IMAGE_SIZE = 315;
+
+            var img = resp.result.image && resp.result.image.url.replace(/(.+)\?sz=\d\d/, "$1?sz=" + PROFILE_IMAGE_SIZE);
+            var coverImg = resp.result.cover && resp.result.cover.coverPhoto.url.replace(/\/s\d{3}-/, "/s" + COVER_IMAGE_SIZE + "-");
+            
+            self.user = {
+              name: resp.result.displayName,
+              id: resp.result.id,
+              email: resp.result.emails[0].value,
+              profile: img || null,
+              cover: coverImg || null
+            };
+
+            self.fire('user-connected', self.user);
+
+            //self.$['navheaderstyle'].coverImg = coverImg;
+            self.$.navheader.style.backgroundImage = 'url(' + coverImg + ')';
+            self.$.navheader.classList.add('coverimg');
+          });
+        });
+      }
+    });
+  </script>
+</polymer-element>

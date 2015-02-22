@@ -1,0 +1,93 @@
+<link rel="import" href="../../components/core-icon/core-icon.html">
+<link rel="import" href="../../components/core-image/core-image.html">
+<link rel="import" href="../../components/core-scroll-header-panel/core-scroll-header-panel.html">
+<link rel="import" href="../../components/font-roboto/roboto.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/polymer-filters/polymer-filters.html">
+<link rel="import" href="../../components/polymer-ui-ratings/polymer-ui-ratings.html">
+
+<polymer-element name="info-page"
+                 extends="base-page"
+                 attributes"eventId events"
+                 layout vertical>
+  <template>
+    <link rel="stylesheet" href="info-page.css">
+
+    <core-scroll-header-panel id="scrollHeaderPanel" condenses flex>
+      <core-toolbar class="tall">
+        <a href="#" id="back" on-click="{{goBack}}">
+          <paper-icon-button icon="arrow-back"></paper-icon-button>
+        </a>
+        <div id="title" class="bottom indent">Event details</div>
+      </core-toolbar>
+      <div content>
+        <core-ajax auto url="http://156.35.95.67/dit/events/{{eventId}}"
+                 on-core-response={{handleEventResponse}} handleAs="json">
+        </core-ajax>
+        <template id="eventDetails" bind="{{event}}">
+          <div class="header">
+            <core-image src="{{headerImage}}"></core-image>
+            <div class="profileContainer">
+              <core-image class="profileImage" src="{{profileImage}}" sizing="cover" preload></core-image>
+            </div>
+          </div>
+          <div class="details">
+            <h1>{{title}}</h1>
+            <p>{{description}}</p>
+            <a href="#" id="attend">
+              <paper-button>Attend</paper-button>
+            </a>
+
+            <hr id="afterButton">
+
+            <p><core-icon icon="explore"></core-icon> {{address}}</p>
+            <p><core-icon icon="today"></core-icon> {{time}}</p>
+
+            <hr>
+
+            <h2>Attendees</h2>
+            <template repeat="{{attendees}}">
+              <core-image class="profileImage attendee" src="{{profileImage}}" sizing="cover" preload></core-image>
+            </template>
+
+            <hr>
+
+            <h2>Suggested places</h2>
+            <core-ajax auto url="http://156.35.95.67/dit/categories/{{categoryId}}/places?elements=3"
+                 on-core-response={{handlePlacesResponse}} handleAs="json">
+            </core-ajax>
+            <template id="places" repeat="{{places}}">
+              <div class="placeContainer">
+                <core-image class="placeImage" src="{{image}}" sizing="cover" preload></core-image>
+                <h3>{{name}}</h3>
+                <polymer-ui-ratings value="{{rating}}"></polymer-ui-ratings>
+                <p>{{address}}</p>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </core-scroll-header-panel>
+  </template>
+
+  <script>
+    Polymer('info-page', {
+      handleEventResponse: function(e) {
+        this.$.eventDetails.model = { event: e.detail.response };
+      },
+
+      handlePlacesResponse: function(e) {
+        for (index in e.detail.response) {
+          e.detail.response[index].rating = Math.floor(e.detail.response[index].rating);
+        }
+
+        document.querySelector('body /deep/ #places').model = { places: e.detail.response };
+      },
+
+      toIntFilter: function() {
+        alert(value);
+        return Math.floor(7);
+      }
+    });
+  </script>
+</polymer-element>

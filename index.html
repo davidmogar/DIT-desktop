@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <title>Do It Together</title>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <script src="components/webcomponentsjs/webcomponents.js"></script>
+
+  <link rel="import" href="components/core-animated-pages/core-animated-pages.html">
+  <link rel="import" href="components/flatiron-director/flatiron-director.html">
+
+  <link rel="import" href="elements/elements.critical.html">
+</head>
+
+<body unresolved fullbleed layout vertical>
+  <template is="auto-binding" id="template">
+
+    <core-ajax id="ajax" auto handleAs="json" url="http://156.35.95.67/dit/events" response="{{events}}"></core-ajax>
+
+    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
+    </core-media-query>
+
+    <flatiron-director id="director" route="{{route}}" autoHash></flatiron-director>
+
+    <core-animated-pages id="pages" transition="cross-fade-all hero-transition fade-scale fade-slide-up" fit>
+      <section>
+        <events-page hero heading="{{heading}}" events="{{events}}"></events-page>
+      </section>
+      <section>
+        <info-page></info-page>
+      </section>
+      <section>
+        <add-page user="{{user}}"></add-page>
+      </section>
+    </core-animated-pages>
+  </template>
+
+<!--  <script src="components/director/build/director.js"></script> -->
+  <script src="js/app.js"></script>
+</body>

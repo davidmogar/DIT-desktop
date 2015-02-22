@@ -1,0 +1,66 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<polymer-element name="event-card">
+  <template>
+    <link rel="stylesheet" href="event-card.css">
+
+    <div class="wrapper">
+      <div class="card">
+        <div class="header">
+          <template if="{{headerImage}}">
+            <img src="{{headerImage}}" alt="Event header image" />
+            <div class="profileContainer">
+              <template if="{{profileImage}}">
+                <img class="profileImage" src="{{profileImage}}" alt="Event owner profile image" />
+              </template>
+            </div>
+          </template>
+        </div>
+        <content></content>
+      </div>
+    </div>
+  
+  </template>
+
+  <script>
+    Polymer('event-card', {
+      publish: {
+
+        /**
+         * The title of the card.
+         *
+         * @attribute heading
+         * @type string
+         * @default ''
+         */
+        heading: '',
+
+        /**
+         * The hex color of the heading.
+         *
+         * @attribute headingColor
+         * @type string
+         * @default '#000'
+         */
+        headingColor: '#000',
+
+        /**
+         * The url of the header image of the card.
+         *
+         * @attribute headerImage
+         * @type string
+         * @default ''
+         */
+        headerImage:'',
+
+        /**
+         * Event owner profile image.
+         * @atrrbiute profileImage
+         * @type string
+         * @default: ''
+         */
+        profileImage: ''
+      } 
+    });
+  </script>
+</polymer-element>

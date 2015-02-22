@@ -1,0 +1,24 @@
+:host {
+  font-family: 'RobotoDraft', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+paper-item {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+core-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin-right: 2em;
+}
+
+.separator {
+  border-top: 1px solid #e0e0e0;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 16px 16px 10px 16px;
+}
+
+paper-item, .separator {
+  margin: 0 -12px;
+}

@@ -1,0 +1,67 @@
+.wrapper {
+  padding-bottom: 20px;
+}
+
+.card {
+  border-radius: 2px;
+  box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px, rgba(0, 0, 0, 0.098) 0px 0px 3px;
+  background-color: #fff;
+}
+
+.header {
+  margin-bottom: -30px;
+}
+
+.profileContainer {
+  position: relative;
+  text-align: right;
+  top: -30px;
+  width: 100%;
+}
+
+.profileImage {
+  border-radius: 50%;
+  margin-right: 15px;
+  max-width: 48px;
+  max-height: 48px;
+  vertical-align: bottom;
+}
+
+.header > img {
+  width: 100%;
+  pointer-events: none;
+}
+
+polyfill-next-selector { content: '> [content]' }
+::content > [content] {
+  font-weight: 300;
+  padding: 16px;
+}
+
+::content h1, ::content h2 {
+  font-size: 20px;
+  font-weight: 300;
+  margin: 0;
+}
+
+::content p {
+  color: #404040;
+  font-size: 13px;
+}
+
+::content p core-icon {
+  height: 20px;
+  margin-right: 5px;
+  width: 20px;
+}
+
+polyfill-next-selector { content: '> [actions]' }
+::content > [actions] {
+  border-top: 1px solid #e8e8e8;
+  padding: 5px 16px;
+}
+
+@media (max-width: 680px) {
+  ::host {
+  }
+}
