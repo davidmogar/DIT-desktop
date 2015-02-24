@@ -3,12 +3,11 @@
 <link rel="import" href="../../components/core-scroll-header-panel/core-scroll-header-panel.html">
 <link rel="import" href="../../components/font-roboto/roboto.html">
 <link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/polymer-filters/polymer-filters.html">
 <link rel="import" href="../../components/polymer-ui-ratings/polymer-ui-ratings.html">
 
 <polymer-element name="info-page"
                  extends="base-page"
-                 attributes"eventId events"
+                 attributes="eventId"
                  layout vertical>
   <template>
     <link rel="stylesheet" href="info-page.css">
@@ -21,9 +20,11 @@
         <div id="title" class="bottom indent">Event details</div>
       </core-toolbar>
       <div content>
-        <core-ajax auto url="http://156.35.95.67/dit/events/{{eventId}}"
-                 on-core-response={{handleEventResponse}} handleAs="json">
-        </core-ajax>
+        <template if="{{eventId}}">
+          <core-ajax auto url="http://156.35.95.67/dit/events/{{eventId}}"
+                   on-core-response={{handleEventResponse}} handleAs="json">
+          </core-ajax>
+        </template>
         <template id="eventDetails" bind="{{event}}">
           <div class="header">
             <core-image src="{{headerImage}}"></core-image>

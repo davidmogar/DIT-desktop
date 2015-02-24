@@ -15,10 +15,7 @@
 <body unresolved fullbleed layout vertical>
   <template is="auto-binding" id="template">
 
-    <core-ajax id="ajax" auto handleAs="json" url="http://156.35.95.67/dit/events" response="{{events}}"></core-ajax>
-
-    <core-media-query query="min-width: 640px" queryMatches="{{largeScreen}}">
-    </core-media-query>
+    <core-ajax id="ajax" auto handleAs="json" url="http://156.35.95.67/dit/events" on-core-response="{{handleEventsResponse}}" response="{{events}}"></core-ajax>
 
     <flatiron-director id="director" route="{{route}}" autoHash></flatiron-director>
 

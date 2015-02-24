@@ -5,6 +5,29 @@ var template = document.querySelector('#template');
 template.heading = 'Do It Together';
 template.route = 0;
 
+template.handleEventsResponse = function(e) {
+  for (index in e.detail.response) {
+    
+    e.detail.response[index].time = new Date(e.detail.response[index].time).toUTCString();
+
+    e.detail.response[index].attendAction = "attend";
+    e.detail.response[index].attendText = "Attend";
+
+    if (template.user.id == e.detail.response[index].userId) {
+      e.detail.response[index].attendAction = "delete";
+      e.detail.response[index].attendText = "Delete";
+    } else {
+      for (user in e.detail.response[index].attendees) {
+        if (template.user.id == e.detail.response[index].attendees[user].userId) {
+          e.detail.response[index].attendAction = "dropout";
+          e.detail.response[index].attendText = "Drop out";
+          break;
+        }
+      }
+    }
+  }
+};
+
 template.addEventListener('template-bound', function() {
   var pages = document.querySelector('#pages');
   var infoPage = document.querySelector('info-page');
@@ -25,16 +48,33 @@ template.addEventListener('template-bound', function() {
     pages.selected = 0;
   }
 
-  var attend = function(eventId, userId) {
-    template.$.ajax.url = URL_BASE + 'events/' + eventId + '/attendees';
+  var deleteEvent = function(eventId, userId) {
+console.log('delete');
+    template.$.ajax.url = URL_BASE + 'events/' + eventId;
+    template.$.ajax.method = 'DELETE';
     template.$.ajax.contentType = 'application/json';
-    template.$.ajax.method = 'POST';
-    template.$.ajax.body = JSON.stringify({
-      userId: userId,
-      eventId: parseInt(eventId),
-      profileImage: template.user.profile
-    });
     template.$.ajax.go();
+
+    userEvents(userId);
+  }
+
+  var attend = function(eventId, userId, attend) {
+    if (attend) {
+      template.$.ajax.url = URL_BASE + 'events/' + eventId + '/attendees';
+      template.$.ajax.method = 'POST';
+      template.$.ajax.body = JSON.stringify({
+        userId: userId,
+        eventId: parseInt(eventId),
+        profileImage: template.user.profile
+      });
+    } else {
+      template.$.ajax.url = URL_BASE + 'events/' + eventId + '/attendees/' + userId;
+      template.$.ajax.method = 'DELETE';
+    }
+    template.$.ajax.contentType = 'application/json';
+    template.$.ajax.go();
+
+    attendEvents(userId);
   }
 
   var attendEvents = function(userId) {
@@ -54,8 +94,10 @@ template.addEventListener('template-bound', function() {
   }
 
   var info = function(eventId) {
-    infoPage.eventId = eventId;
-    pages.selected = 1; 
+    if (typeof eventId !== 'undefined') {
+      infoPage.eventId = eventId;
+      pages.selected = 1;
+    }
   }
 
   var add = function() {
@@ -67,8 +109,12 @@ template.addEventListener('template-bound', function() {
 
     switch(fields[0]) {
       case 'events':
-        if (fields.length == 4) {
-          attend(fields[1], fields[3]);
+        if (fields.length == 5) {
+          if (fields[4] == "delete") {
+            deleteEvent(fields[1], fields[3]);
+          } else {
+            attend(fields[1], fields[3], fields[4] == "attend");
+          }
         } else {
           (fields.length == 3)? events(fields[1], fields[2]) : events();
         }
@@ -86,15 +132,9 @@ template.addEventListener('template-bound', function() {
     }
   };
 
-  document.addEventListener('change-route', function(e) {
-    if (e.detail) {
-      router.setRoute(e.detail);
-    }
-  });
-
   document.addEventListener('change-route-back', function() {
     history.back();
-});
+  });
 
   document.addEventListener('director-route', function(e) {
     if (e.detail) {
@@ -105,5 +145,6 @@ template.addEventListener('template-bound', function() {
 
   document.addEventListener('user-connected', function(e) {
     template.user = e.detail;
+    events();
   });
 });

@@ -29,7 +29,6 @@ a, a:visited, a:hover {
 }
 
 #navheader {
-  background-image: url('images/beach.jpg');
   background-blend-mode: multiply;
   background-repeat: no-repeat;
   background-color: #999;

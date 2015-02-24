@@ -31,13 +31,13 @@
     <core-style ref="navheaderstyle"></core-style>
     
     <div id="loginscreen" layout vertical center-center fit
-     class="{{ {show: !isAuthenticated} | tokenList }}">
-  <google-signin width="wide" height="tall"
-      clientId="335051792914-6cnes5lh32ehit2vhpiigi0qel68heeb.apps.googleusercontent.com"
-      scopes="profile email https://www.googleapis.com/auth/plus.login"
-      on-google-signin-success="{{onSigninSuccess}}"
-      on-google-signin-failure="{{onSigninFailure}}"></google-signin>
-</div>
+          class="{{ {show: !isAuthenticated} | tokenList }}">
+      <google-signin width="wide" height="tall"
+            clientId="335051792914-6cnes5lh32ehit2vhpiigi0qel68heeb.apps.googleusercontent.com"
+            scopes="profile email https://www.googleapis.com/auth/plus.login"
+            on-google-signin-success="{{onSigninSuccess}}"
+            on-google-signin-failure="{{onSigninFailure}}"></google-signin>
+    </div>
  
     <core-drawer-panel id="drawerPanel">
       <core-header-panel mode="scroll" drawer>
@@ -74,8 +74,8 @@
                   <a href="#event/{{model.id}}">
                     <paper-button affirmative>Details</paper-button>
                   </a>
-                  <a href="#events/{{model.id}}/attendees/{{user.id}}">
-                  <paper-button class="accent" affirmative>Attend</paper-button>
+                  <a href="#events/{{model.id}}/user/{{user.id}}/{{model.attendAction}}">
+                  <paper-button class="accent" affirmative>{{model.attendText}}</paper-button>
                   </a>
                 </div>
               </event-card>
